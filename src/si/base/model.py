@@ -2,7 +2,6 @@ from abc import ABCMeta, ABC, abstractmethod
 
 from si.base.estimator import Estimator
 
-
 class Model(Estimator, ABC):
     """
     Abstract base class for models.
@@ -30,7 +29,7 @@ class Model(Estimator, ABC):
         predictions: np.ndarray
             The predicted target values.
         """
-        if not self.is_fitted:
+        if not self.is_fitted():
             raise ValueError('Model needs to be fitted before calling predict()')
         return self._predict(dataset)
 
@@ -68,3 +67,15 @@ class Model(Estimator, ABC):
         """
         self.fit(dataset)
         return self.predict(dataset)
+
+    def score(self, dataset):
+        if not self.is_fitted():
+            raise ValueError('Model needs to be fitted before calling score()')
+        predictions = self.predict(dataset)
+        return self._score(dataset, predictions)
+
+    @abstractmethod
+    def _score(self, dataset, predictions):
+        """
+        Compute the error metric between the real values of the dataset and the predictions.
+        """
